@@ -7,13 +7,13 @@ AUTH = Auth()
 
 
 @app.route("/")
-def home():
+def home() -> str:
     """home route"""
     return jsonify({"message": "Bienvenue"})
 
 
 @app.route("/users", methods=["POST"])
-def users():
+def users() -> str:
     """users route"""
     try:
         email = request.form["email"]
@@ -24,7 +24,7 @@ def users():
 
 
 @app.route("/sessions", methods=["POST"])
-def login():
+def login() -> str:
     """login route"""
     email = request.form["email"]
     if AUTH.valid_login(email, request.form["password"]):
@@ -35,7 +35,7 @@ def login():
 
 
 @app.route("/sessions", methods=["DELETE"])
-def logout():
+def logout() -> str:
     """logout"""
     user = AUTH.get_user_from_session_id(request.cookies["session_id"])
     if user:
@@ -45,7 +45,7 @@ def logout():
 
 
 @app.route("/profile")
-def profile():
+def profile() -> str:
     """profile route"""
     user = AUTH.get_user_from_session_id(request.cookies["session_id"])
     if user:
@@ -54,7 +54,7 @@ def profile():
 
 
 @app.route("/reset_password", methods=["POST"])
-def get_reset_password_token():
+def get_reset_password_token() -> str:
     """reset password route"""
     try:
         token = AUTH.get_reset_password_token(request.form["email"])
@@ -64,7 +64,7 @@ def get_reset_password_token():
 
 
 @app.route("/reset_password", methods=["PUT"])
-def update_password():
+def update_password() -> str:
     """update password route"""
     try:
         form = request.form
