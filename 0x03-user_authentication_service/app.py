@@ -25,7 +25,7 @@ def users():
 
 @app.route("/sessions", methods=["POST"])
 def login():
-    """sessions route"""
+    """login route"""
     email = request.form["email"]
     if AUTH.valid_login(email, request.form["password"]):
         res = make_response(jsonify({"email": email, "message": "logged in"}))
@@ -42,6 +42,36 @@ def logout():
         AUTH.destroy_session(user.id)
         return redirect("/")
     abort(403)
+
+
+@app.route("/profile")
+def profile():
+    """profile route"""
+    user = AUTH.get_user_from_session_id(request.cookies["session_id"])
+    if user:
+        return jsonify({"email": user.email})
+    abort(403)
+
+
+@app.route("/reset_password", methods=["POST"])
+def get_reset_password_token():
+    """reset password route"""
+    try:
+        token = AUTH.get_reset_password_token(request.form["email"])
+        return jsonify({"email": request.form["email"], "reset_token": token})
+    except ValueError:
+        abort(403)
+
+
+@app.route("/reset_password", methods=["PUT"])
+def update_password():
+    """update password route"""
+    try:
+        form = request.form
+        AUTH.update_password(form["reset_token"], form["new_password"])
+        return jsonify({"email": form["email"], "message": "Password updated"})
+    except ValueError:
+        abort(403)
 
 
 if __name__ == "__main__":
