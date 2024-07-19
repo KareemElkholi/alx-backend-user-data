@@ -48,9 +48,9 @@ def logout() -> str:
 def profile() -> str:
     """profile route"""
     user = AUTH.get_user_from_session_id(request.cookies.get("session_id"))
-    if user:
-        return jsonify({"email": user.email})
-    abort(403)
+    if request.cookies.get("session_id") is None or user is None:
+        abort(403)
+    return jsonify({"email": user.email})
 
 
 @app.route("/reset_password", methods=["POST"])
