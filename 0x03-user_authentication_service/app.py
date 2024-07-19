@@ -37,18 +37,17 @@ def login() -> str:
 @app.route("/sessions", methods=["DELETE"])
 def logout() -> str:
     """logout"""
-    user = AUTH.get_user_from_session_id(request.cookies["session_id"])
-    if request.cookies["session_id"] is None or user is None:
+    user = AUTH.get_user_from_session_id(request.cookies.get("session_id"))
+    if request.cookies.get("session_id") is None or user is None:
         abort(403)
-    else:
-        AUTH.destroy_session(user.id)
-        return redirect("/")
+    AUTH.destroy_session(user.id)
+    return redirect("/")
 
 
 @app.route("/profile")
 def profile() -> str:
     """profile route"""
-    user = AUTH.get_user_from_session_id(request.cookies["session_id"])
+    user = AUTH.get_user_from_session_id(request.cookies.get("session_id"))
     if user:
         return jsonify({"email": user.email})
     abort(403)
